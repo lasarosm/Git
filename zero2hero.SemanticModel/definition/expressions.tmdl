@@ -1,0 +1,246 @@
+expression Geography =
+		let
+		    Source = Csv.Document(File.Contents("C:\Users\Administrator.ADVENTUREWORKS\Desktop\Folder Sources/Aworks\DimGeography.csv"),[Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+		    #"Removed Other Columns" = Table.SelectColumns(#"Promoted Headers",{"GeographyKey", "City", "StateProvinceName", "EnglishCountryRegionName", "PostalCode"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Removed Other Columns",{{"EnglishCountryRegionName", "Country"}, {"StateProvinceName", "State"}}),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"GeographyKey", Int64.Type}})
+		in
+		    #"Changed Type"
+	lineageTag: 00687772-6d2e-46ea-a650-947d213d200b
+	queryGroup: 'Reference Queries'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression SubCategory =
+		let
+		    Source = Csv.Document(File.Contents("C:\Users\Administrator.ADVENTUREWORKS\Desktop\Folder Sources\Aworks\DimProductSubCategory.csv"),[Delimiter=",", Columns=6, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ProductSubcategoryKey", Int64.Type}, {"ProductSubcategoryAlternateKey", Int64.Type}, {"EnglishProductSubcategoryName", type text}, {"SpanishProductSubcategoryName", type text}, {"FrenchProductSubcategoryName", type text}, {"ProductCategoryKey", Int64.Type}})
+		in
+		    #"Changed Type"
+	lineageTag: c1a44d9e-7d86-4fa3-9a5f-5210b8509d69
+	queryGroup: 'Reference Queries'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Category =
+		let
+		    Source = Csv.Document(File.Contents("C:\Users\Administrator.ADVENTUREWORKS\Desktop\Folder Sources\Aworks\DimProductCategory.csv"),[Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"ProductCategoryKey", Int64.Type}, {"ProductCategoryAlternateKey", Int64.Type}, {"EnglishProductCategoryName", type text}, {"SpanishProductCategoryName", type text}, {"FrenchProductCategoryName", type text}})
+		in
+		    #"Changed Type"
+	lineageTag: 236b3a75-8d7f-442f-b34b-a5a3bd8d1725
+	queryGroup: 'Reference Queries'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression PYearStart = 2018 meta [IsParameterQuery=true, ExpressionIdentifier=YearList, Type="Number", IsParameterQueryRequired=true]
+	lineageTag: 7325e440-0f5b-485a-a202-15d4f475a866
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Number
+
+expression PYearEnd = 2023 meta [IsParameterQuery=true, ExpressionIdentifier=YearList, Type="Number", IsParameterQueryRequired=true]
+	lineageTag: c8131751-d86a-46cc-9b86-9f4b65a0b15f
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Number
+
+expression 'Exported Data' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("bZCxDsMgDET/hTkDGIzJGFX9gHZFGaIKRRnaVGk65O9rYAnQ4aTo6XK+w3txD/OyvkQnLtMe5nU7+PO2H2LsvBieYVseExPDUhJtwtfvtr4DE81CiyVEVi9NFeBiALjsHT5LZMQCjW0mSGNKClHQU0lzqCpCU1M0/ZnZyBRQm0kom0YSoT2jUdWTUipqqnDcD6bd6fS/8rr6O3tLp02t6BwZjyiCM0pPhKiay1DY0lkn69Z5jGLr+AM=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t, Column2 = _t, Column3 = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}, {"Column2", type text}, {"Column3", type text}}),
+		    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+		    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"Region", type text}, {"Category", Int64.Type}, {"Qty", Int64.Type}}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Changed Type1",{{"Qty", "Quantity"}, {"Category", "Category Code"}})
+		in
+		    #"Renamed Columns"
+	lineageTag: 116b4598-1a08-4de7-8d73-e3c9e43e8c44
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Right-Lookup =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WcsxNLcpMTlTSUTJRitVB5lug8c3AfNfSovyCVCDXGJVrpBQbCwA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Region = _t, #"Category Code" = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Region", type text}, {"Category Code", Int64.Type}})
+		in
+		    #"Changed Type"
+	lineageTag: 8d87f719-edc6-4e9b-83f0-94fd19e0f8a7
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Right-Merge =
+		let
+		    Source = Table.NestedJoin(#"Exported Data", {"Region", "Category Code"}, #"Right-Lookup", {"Region", "Category Code"}, "Right-Lookup", JoinKind.LeftOuter),
+		    #"Expanded Right-Lookup" = Table.ExpandTableColumn(Source, "Right-Lookup", {"Region", "Category Code"}, {"Region.1", "Category Code.1"}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Expanded Right-Lookup",{"Region", "Category Code"}),
+		    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Region.1", "Category Code.1", "Quantity"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Reordered Columns",{{"Region.1", "Region"}, {"Category Code.1", "Category Code"}}),
+		    #"Filtered Rows" = Table.SelectRows(#"Renamed Columns", each ([Region] <> null))
+		in
+		    #"Filtered Rows"
+	lineageTag: a4458b66-dc73-48e8-a1a9-7a5ab292d78c
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression Left-Exclusion =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WcizOTFTSUTJSio0FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Region = _t, #"Category Code" = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Region", type text}, {"Category Code", Int64.Type}})
+		in
+		    #"Changed Type"
+	lineageTag: e8cc5d76-ad92-41d2-b6a4-171133f88d82
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Left Anti-Merge' =
+		let
+		    Source = Table.NestedJoin(#"Exported Data", {"Region", "Category Code"}, #"Left-Exclusion", {"Region", "Category Code"}, "Left-Exclusion", JoinKind.LeftAnti),
+		    #"Expanded Left-Exclusion" = Table.ExpandTableColumn(Source, "Left-Exclusion", {"Region", "Category Code"}, {"Region.1", "Category Code.1"}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Expanded Left-Exclusion",{"Region.1", "Category Code.1"})
+		in
+		    #"Removed Columns"
+	lineageTag: 12fba5d2-a0a8-40e6-be92-605a5d074c76
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Right-Anti Task' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("nYw7CoAwFATv8mov4a8SEcQum0IhRTCsoIXXd33ewG5mYTYEW9ZrB6eb6QRrcMx7AhtwSARbYS4F7MD52MBe23qW4wL/l1aZZxarYLXsTV0aiXLnVvxeuHQS3Tj34u/KYnwA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Task = _t, Column1 = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Task", type text}, {"Column1", type text}}),
+		    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+		    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"Task#(lf)Owner#(lf)A#(lf)Mike#(lf)B#(lf)Ken#(lf)C#(lf)Bill#(lf)D#(lf)Rob#(lf)E#(lf)Carlos#(lf)Task#(lf)Owner#(lf)A#(lf)Mike#(lf)B#(lf)Ken#(lf)C#(lf)Bill#(lf)D#(lf)Rob#(lf)E#(lf)Carlos#(lf)", type text}, {"Owner", type text}}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Changed Type1",{{"Task#(lf)Owner#(lf)A#(lf)Mike#(lf)B#(lf)Ken#(lf)C#(lf)Bill#(lf)D#(lf)Rob#(lf)E#(lf)Carlos#(lf)Task#(lf)Owner#(lf)A#(lf)Mike#(lf)B#(lf)Ken#(lf)C#(lf)Bill#(lf)D#(lf)Rob#(lf)E#(lf)Carlos#(lf)", "Task"}})
+		in
+		    #"Renamed Columns"
+	lineageTag: 9c993232-9992-494c-ba8c-f21617aee172
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Right Anti Delta' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WclTSUfLNzE5VitWJVnICcrxT88BsZyDbKTMnB8xxAXKC8pPAbFcg2zmxKCe/GMx1A3K98oszwBx3MCcDYoIHyOjEokql2FgA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Task = _t, Owner = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Task", type text}, {"Owner", type text}})
+		in
+		    #"Changed Type"
+	lineageTag: de2df75a-4c14-4796-b106-43f865760670
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Right Anti-Merge' =
+		let
+		    Source = Table.NestedJoin(#"Right-Anti Task", {"Task", "Owner"}, #"Right Anti Delta", {"Task", "Owner"}, "Right Anti Delta", JoinKind.RightAnti),
+		    #"Expanded Right Anti Delta" = Table.ExpandTableColumn(Source, "Right Anti Delta", {"Task", "Owner"}, {"Task.1", "Owner.1"}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Expanded Right Anti Delta",{"Task", "Owner"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Task.1", "Task"}, {"Owner.1", "Owner"}})
+		in
+		    #"Renamed Columns"
+	lineageTag: 614072d1-2182-4860-a547-451d74af2477
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Online Sales' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("ZZE7DsMwDEPv4jkgLNny5xQ9gJExQ4Ei9x9rxUvNTgYfKEqExwgSjiAGLfN93Z/3fYXzGEGn1IwuO07ubiBzXhlG2DwjIrYdu0sKet2xy4pKC302GSKZ+5QF1ncq0aMrhLmHdmQKES8p+rdT0rqwJOJPzwzGT09kai+u00zhY/wKEVQjvqoS9GFtMKXv8aZpnv7Lzy8=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Account = _t, Amount = _t, Channel = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Account", Int64.Type}, {"Amount", type number}, {"Channel", type text}})
+		in
+		    #"Changed Type"
+	lineageTag: 17b6cdd5-45db-4d44-a286-40e103b99207
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Tele Sales' =
+		let
+		    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("bY87DsMwDEPv4jkgLMny5xztFmTo4C1b7w/EyhhmMsAn64n7nrSkLSmGruc7z/n5nfOfjm2RvCIx9M5IVjSQKxGPbYbK62LWCooQkRBU9MIeixMG6gsKgzjcGY0VNTS+LtZ19MZfIhLBeOkajRyNPRZVVOBcScOdoUzsNimMkd+qDHvcd1w=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Account = _t, Amount = _t, Channel = _t]),
+		    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Account", Int64.Type}, {"Amount", type number}, {"Channel", type text}})
+		in
+		    #"Changed Type"
+	lineageTag: 25f3d5ac-e558-4634-9d72-7d9c5e3af68a
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Inner Merge' =
+		let
+		    Source = Table.NestedJoin(#"Online Sales", {"Account"}, #"Tele Sales", {"Account"}, "Tele Sales", JoinKind.Inner),
+		    #"Expanded Tele Sales" = Table.ExpandTableColumn(Source, "Tele Sales", {"Amount"}, {"Amount.1"}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Expanded Tele Sales",{"Channel"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Amount", "Online Amount"}, {"Amount.1", "Tele Amount"}}),
+		    #"Inserted Addition" = Table.AddColumn(#"Renamed Columns", "Addition", each [Online Amount] + [Tele Amount], type number),
+		    #"Renamed Columns1" = Table.RenameColumns(#"Inserted Addition",{{"Addition", "All Sales"}})
+		in
+		    #"Renamed Columns1"
+	lineageTag: 7d0ed30d-9939-4581-99ff-152cc4b7547a
+	queryGroup: 'Merge Operations'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression YearList =
+		let
+		    Source = Csv.Document(File.Contents("C:\Users\Administrator.ADVENTUREWORKS\Desktop\Folder Sources\Aworks\FactInternetSales.csv"),[Delimiter=",", Columns=22, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"SalesOrderNumber", type text}, {"SalesOrderLineNumber", Int64.Type}, {"OrderDate", type date}, {"DueDate", type date}, {"ShipDate", type date}, {"ProductKey", Int64.Type}, {"CustomerKey", Int64.Type}, {"PromotionKey", Int64.Type}, {"CurrencyKey", Int64.Type}, {"SalesTerritoryKey", Int64.Type}, {"OrderQuantity", Int64.Type}, {"UnitPrice", type number}, {"ExtendedAmount", type number}, {"UnitPriceDiscountPct", Int64.Type}, {"DiscountAmount", Int64.Type}, {"ProductStandardCost", type number}, {"TotalProductCost", type number}, {"SalesAmount", type number}, {"TaxAmt", type number}, {"Freight", type number}, {"CarrierTrackingNumber", type text}, {"CustomerPONumber", type text}}),
+		    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"PromotionKey", "CurrencyKey", "SalesTerritoryKey", "CarrierTrackingNumber", "CustomerPONumber"}),
+		    #"Rounded Off" = Table.TransformColumns(#"Removed Columns",{{"UnitPrice", each Number.Round(_, 1), type number}, {"ExtendedAmount", each Number.Round(_, 1), type number}}),
+		    #"Rounded Off1" = Table.TransformColumns(#"Rounded Off",{{"ProductStandardCost", each Number.Round(_, 1), type number}, {"TotalProductCost", each Number.Round(_, 1), type number}, {"SalesAmount", each Number.Round(_, 1), type number}, {"TaxAmt", each Number.Round(_, 1), type number}, {"Freight", each Number.Round(_, 1), type number}}),
+		    #"Split Column by Character Transition" = Table.SplitColumn(#"Rounded Off1", "SalesOrderNumber", Splitter.SplitTextByCharacterTransition((c) => not List.Contains({"0".."9"}, c), {"0".."9"}), {"SalesOrderNumber.1", "SalesOrderNumber.2"}),
+		    #"Removed Columns1" = Table.RemoveColumns(#"Split Column by Character Transition",{"SalesOrderNumber.1"}),
+		    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns1",{{"SalesOrderNumber.2", "SalesOrderNumber"}}),
+		    #"Inserted Month Name" = Table.AddColumn(#"Renamed Columns", "Month Name", each Date.MonthName([OrderDate]), type text),
+		    #"Inserted Start of Quarter" = Table.AddColumn(#"Inserted Month Name", "Start of Quarter", each Date.StartOfQuarter([OrderDate]), type date),
+		    #"Duplicated Column" = Table.DuplicateColumn(#"Inserted Start of Quarter", "OrderDate", "OrderDate - Copy"),
+		    #"Extracted Year" = Table.TransformColumns(#"Duplicated Column",{{"OrderDate - Copy", Date.Year, Int64.Type}}),
+		    #"OrderDate - Copy1" = #"Extracted Year"[#"OrderDate - Copy"],
+		    #"Removed Duplicates" = List.Distinct(#"OrderDate - Copy1")
+		in
+		    #"Removed Duplicates"
+	lineageTag: a46c7c17-5286-4af2-9dd6-78bd5ad1ca96
+	queryGroup: 'Reference Queries'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = List
+
