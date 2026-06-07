@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
-  "name": "0e5e996f11f607ccc711",
+  "name": "b671c272d1c7a20892d0",
   "position": {
-    "x": 36.286321757618708,
-    "y": 19.050318922749824,
-    "z": 0,
-    "height": 500.75124025513821,
-    "width": 933.4656272147414,
-    "tabOrder": 0
+    "x": 219.57723577235771,
+    "y": 100.9430894308943,
+    "z": 1,
+    "height": 445.39837398373982,
+    "width": 826.27642276422762,
+    "tabOrder": 1
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -20,14 +20,14 @@
                 "Column": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Customer"
+                      "Entity": "Product"
                     }
                   },
-                  "Property": "EnglishEducation"
+                  "Property": "Category"
                 }
               },
-              "queryRef": "Customer.EnglishEducation",
-              "nativeQueryRef": "EnglishEducation",
+              "queryRef": "Product.Category",
+              "nativeQueryRef": "Category",
               "active": true
             }
           ]
@@ -44,14 +44,14 @@
                           "Entity": "Sales"
                         }
                       },
-                      "Property": "SalesAmount"
+                      "Property": "OrderQuantity"
                     }
                   },
                   "Function": 0
                 }
               },
-              "queryRef": "Sum(Sales.SalesAmount)",
-              "nativeQueryRef": "Sum of SalesAmount"
+              "queryRef": "Sum(Sales.OrderQuantity)",
+              "nativeQueryRef": "Sum of OrderQuantity"
             }
           ]
         }
@@ -68,7 +68,7 @@
                         "Entity": "Sales"
                       }
                     },
-                    "Property": "SalesAmount"
+                    "Property": "OrderQuantity"
                   }
                 },
                 "Function": 0
@@ -85,7 +85,7 @@
   "filterConfig": {
     "filters": [
       {
-        "name": "d8fed2827b41b7b02d87",
+        "name": "2bdd55d6c9ab901caa24",
         "field": {
           "Aggregation": {
             "Expression": {
@@ -95,7 +95,7 @@
                     "Entity": "Sales"
                   }
                 },
-                "Property": "SalesAmount"
+                "Property": "OrderQuantity"
               }
             },
             "Function": 0
@@ -104,15 +104,15 @@
         "type": "Advanced"
       },
       {
-        "name": "17a4db0090673c63aa36",
+        "name": "3269912c2a296aa5cec1",
         "field": {
           "Column": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Customer"
+                "Entity": "Product"
               }
             },
-            "Property": "EnglishEducation"
+            "Property": "Category"
           }
         },
         "type": "Categorical"
