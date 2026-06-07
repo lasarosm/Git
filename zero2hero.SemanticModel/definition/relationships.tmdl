@@ -10,3 +10,8 @@ relationship e50776d5-5bee-f1fe-e277-91fabd808850
 	fromColumn: Sales.OrderDate
 	toColumn: Date.Date
 
+relationship Sales_ShipDate_to_Date
+	isActive: false
+	fromColumn: Sales.ShipDate
+	toColumn: Date.Date
+

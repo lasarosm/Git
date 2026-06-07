@@ -22,7 +22,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_QueryOrder = ["Customer","Geography","Sales","Product","SubCategory","Category","Date","YearList","PYearStart","PYearEnd","Exported Data","Right-Lookup","Right-Merge","Left-Exclusion","Left Anti-Merge","Right-Anti Task","Right Anti Delta","Right Anti-Merge","Online Sales","Tele Sales","Inner Merge","Base Measures"]
 
-annotation PBI_ProTooling = ["DevMode"]
+annotation PBI_ProTooling = ["DevMode","MCP-PBIModeling"]
 
 ref table Customer
 ref table Sales
