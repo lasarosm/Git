@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Zero2Hero"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "62bf7b5a-8828-4f58-8a33-6e80d5cc9494"
+  }
+}

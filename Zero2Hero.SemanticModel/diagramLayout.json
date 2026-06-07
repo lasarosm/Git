@@ -1,0 +1,87 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 31,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 0,
+            "y": 0
+          },
+          "nodeIndex": "Customer",
+          "nodeLineageTag": "fe670d6d-3301-47e7-9255-092b64790ee2",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 830,
+            "y": 10
+          },
+          "nodeIndex": "Product",
+          "nodeLineageTag": "d9c340e1-42ed-4b08-8a5e-3f0b65a2d7be",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 360.20156119318534,
+            "y": 114
+          },
+          "nodeIndex": "Sales",
+          "nodeLineageTag": "07c0fe99-9c93-4b4f-bc9a-065ca5ea4afd",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 699,
+            "y": 412
+          },
+          "nodeIndex": "Date",
+          "nodeLineageTag": "e6bbfe04-e33a-4a1f-9973-2eac3e75c68e",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1114,
+            "y": 304
+          },
+          "nodeIndex": "Base Measures",
+          "nodeLineageTag": "ef7950c0-d31a-492e-ac76-bdd9800eef55",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": true,
+      "showExtraHeaderInfo": true,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}
