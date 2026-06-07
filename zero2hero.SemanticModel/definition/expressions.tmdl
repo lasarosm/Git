@@ -42,7 +42,7 @@ expression Category =
 
 	annotation PBI_ResultType = Table
 
-expression PYearStart = 2022 meta [IsParameterQuery=true, ExpressionIdentifier=YearList, Type="Number", IsParameterQueryRequired=true]
+expression PYearStart = 2018 meta [IsParameterQuery=true, ExpressionIdentifier=YearList, Type="Number", IsParameterQueryRequired=true]
 	lineageTag: 7325e440-0f5b-485a-a202-15d4f475a866
 	queryGroup: Parameters
 
