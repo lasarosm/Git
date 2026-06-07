@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "0e5e996f11f607ccc711",
   "position": {
-    "x": 36.286321757618708,
-    "y": 19.050318922749824,
+    "x": 173.26718639262936,
+    "y": 127.00212615166549,
     "z": 0,
     "height": 500.75124025513821,
     "width": 933.4656272147414,
@@ -79,6 +79,21 @@
         ],
         "isDefaultSort": true
       }
+    },
+    "visualContainerObjects": {
+      "visualTooltip": [
+        {
+          "properties": {
+            "section": {
+              "expr": {
+                "Literal": {
+                  "Value": "'1ce7e06c3a7332e00a26'"
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "drillFilterOtherVisuals": true
   },

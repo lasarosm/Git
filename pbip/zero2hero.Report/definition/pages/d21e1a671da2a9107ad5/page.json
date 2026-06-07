@@ -85,5 +85,6 @@
       }
     ]
   },
+  "visibility": "HiddenInViewMode",
   "type": "Drillthrough"
 }
