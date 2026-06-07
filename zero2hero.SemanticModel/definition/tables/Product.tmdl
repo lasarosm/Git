@@ -1,0 +1,126 @@
+table Product
+	lineageTag: d9c340e1-42ed-4b08-8a5e-3f0b65a2d7be
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 6631e4dc-c495-4734-8b2c-c3ee73ef579a
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product
+		dataType: string
+		lineageTag: 63d91f4f-64f8-4783-848c-5ad6eecc1094
+		summarizeBy: none
+		sourceColumn: Product
+
+		annotation SummarizationSetBy = Automatic
+
+	column StandardCost
+		dataType: double
+		lineageTag: def31e58-600b-4c6a-8c4c-3d74a4259650
+		summarizeBy: none
+		sourceColumn: StandardCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Color
+		dataType: string
+		lineageTag: 319dd51b-00d1-4a58-9604-82b1a4ff0915
+		summarizeBy: none
+		sourceColumn: Color
+
+		annotation SummarizationSetBy = Automatic
+
+	column ListPrice
+		dataType: double
+		lineageTag: e16a1157-542e-405a-a70d-36ec9a8b1685
+		summarizeBy: none
+		sourceColumn: ListPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ProductLine
+		dataType: string
+		lineageTag: 78050c8e-e60b-4e62-bb00-28251ed6bd3d
+		summarizeBy: none
+		sourceColumn: ProductLine
+
+		annotation SummarizationSetBy = Automatic
+
+	column ModelName
+		dataType: string
+		lineageTag: 4f106574-6949-4cc6-9b8a-ee9d9bf9962d
+		summarizeBy: none
+		sourceColumn: ModelName
+
+		annotation SummarizationSetBy = Automatic
+
+	column StartDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cad108b9-49b8-41e1-931b-8a56b0e600b5
+		summarizeBy: none
+		sourceColumn: StartDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column EndDate
+		dataType: string
+		lineageTag: f6c237de-d5dc-4f95-9a94-de475b4ab5f5
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subcategory
+		dataType: string
+		lineageTag: 05fe913a-231b-41ca-891c-cc49cf7067d6
+		summarizeBy: none
+		sourceColumn: Subcategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 023b020e-6436-41f6-9f11-9f87289297c8
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Product = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("C:\Users\Administrator.ADVENTUREWORKS\Desktop\Folder Sources\Aworks\DimProduct.csv"),[Delimiter=",", Columns=36, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Use First Row as Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Change Type" = Table.TransformColumnTypes(#"Use First Row as Headers",{{"ProductKey", Int64.Type}, {"ProductAlternateKey", type text}, {"ProductSubcategoryKey", type text}, {"WeightUnitMeasureCode", type text}, {"SizeUnitMeasureCode", type text}, {"EnglishProductName", type text}, {"SpanishProductName", type text}, {"FrenchProductName", type text}, {"StandardCost", type text}, {"FinishedGoodsFlag", Int64.Type}, {"Color", type text}, {"SafetyStockLevel", Int64.Type}, {"ReorderPoint", Int64.Type}, {"ListPrice", type text}, {"Size", type text}, {"SizeRange", type text}, {"Weight", type text}, {"DaysToManufacture", Int64.Type}, {"ProductLine", type text}, {"DealerPrice", type text}, {"Class", type text}, {"Style", type text}, {"ModelName", type text}, {"LargePhoto", type text}, {"EnglishDescription", type text}, {"FrenchDescription", type text}, {"ChineseDescription", type text}, {"ArabicDescription", type text}, {"HebrewDescription", type text}, {"ThaiDescription", type text}, {"GermanDescription", type text}, {"JapaneseDescription", type text}, {"TurkishDescription", type text}, {"StartDate", type datetime}, {"EndDate", type text}, {"Status", type text}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Change Type",{{"ProductSubcategoryKey", Int64.Type}}),
+				    #"Merged Queries" = Table.NestedJoin(#"Changed Type", {"ProductSubcategoryKey"}, SubCategory, {"ProductSubcategoryKey"}, "SubCategory", JoinKind.LeftOuter),
+				    #"Expanded SubCategory" = Table.ExpandTableColumn(#"Merged Queries", "SubCategory", {"EnglishProductSubcategoryName", "ProductCategoryKey"}, {"EnglishProductSubcategoryName", "ProductCategoryKey"}),
+				    #"Merged Queries1" = Table.NestedJoin(#"Expanded SubCategory", {"ProductCategoryKey"}, Category, {"ProductCategoryKey"}, "Category", JoinKind.LeftOuter),
+				    #"Expanded Category" = Table.ExpandTableColumn(#"Merged Queries1", "Category", {"EnglishProductCategoryName"}, {"EnglishProductCategoryName"}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Expanded Category",{"ProductKey", "EnglishProductName", "StandardCost", "Color", "ListPrice", "ProductLine", "ModelName", "StartDate", "EndDate", "EnglishProductSubcategoryName", "EnglishProductCategoryName"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Other Columns",{{"EnglishProductName", "Product"}}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Renamed Columns",{{"StandardCost", type number}, {"ListPrice", type number}, {"StartDate", type date}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Changed Type1","NULL","Active",Replacer.ReplaceText,{"EndDate"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Replaced Value",{{"EnglishProductSubcategoryName", "Subcategory"}, {"EnglishProductCategoryName", "Category"}}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Renamed Columns1",null,"Uncategorized",Replacer.ReplaceValue,{"Subcategory", "Category"}),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Replaced Value1",{{"ListPrice", Currency.Type}, {"StandardCost", Currency.Type}}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Changed Type2",null,0,Replacer.ReplaceValue,{"StandardCost", "ListPrice"})
+				in
+				    #"Replaced Value2"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
