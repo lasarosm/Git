@@ -1,2 +1,19 @@
-**/.pbi/localSettings.json
-**/.pbi/cache.abf
+# -----------------------------
+# Power BI PBIP - Ignore local cache & temp files
+# -----------------------------
+# Local Analysis Services cache (contains imported data)
+**/.pbi/
+
+# Backup / temp files
+*.tmp
+*.temp
+*.bak
+*.log
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Power BI Desktop user-specific settings
+*.user
+*.settings
